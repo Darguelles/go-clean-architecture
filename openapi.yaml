@@ -1,0 +1,81 @@
+---
+openapi: 3.0.3
+info:
+  version: "1.0.0"
+  title: OpenAPI Go Clean Architecture
+security:
+  - bearerAuth: []
+paths:
+  /accounts:
+    get:
+      operationId: listAccounts
+      description: Returns all exiting AWS Accounts
+      responses:
+        "200":
+          description: A list of AWS Accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+                example:
+                  - id: "1"
+                    name: AccountA
+                  - id: "2"
+                    name: AccountB
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+    post:
+      operationId: saveAccount
+      description: Saves account payload
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+      responses:
+        "200":
+          description: Created account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+components:
+  responses:
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+      # Schema for error response body
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
+    Account:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+        name:
+          type: string
